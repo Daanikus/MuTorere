@@ -19,6 +19,7 @@ package MuTorere;
   
 import MuTorere.Player;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class PlayerAI extends Player {
   
@@ -70,12 +71,14 @@ public class PlayerAI extends Player {
   @return The location of the piece that you wish to move to the empty space.
  */
   public int getMove(){ 
-    return availableMoves();
+    int temp = availableMoves();
+    System.out.println("Moving piece " + temp);
+    if (temp == -1) return 0;
+    return temp;
   }
   
-  private Boolean isValidMove(int pieceLocation) {
+  private Boolean isValidMove(int pieceToMove) {
     int empty = -1, spaceToLeft, spaceToRight; // set empty to -1 to applease the compiling gods
-    int pieceToMove = getMove();
     
     for (int i = 0; i < CIRCLE_SIZE + 1; i++) {
       if (super.boardReader.pieceAt(i) == Board.Piece.BLANK) {
@@ -84,7 +87,9 @@ public class PlayerAI extends Player {
     }
     
     spaceToRight = ((pieceToMove + 1) % CIRCLE_SIZE);
-    spaceToLeft = (pieceToMove + (CIRCLE_SIZE - 1) % CIRCLE_SIZE);
+    System.out.println("Space to right is " + spaceToRight);
+    spaceToLeft = ((pieceToMove - 1) + CIRCLE_SIZE) % CIRCLE_SIZE;
+    System.out.println("Space to left is " + spaceToLeft);
     
     if (pieceToMove == CIRCLE_SIZE) { 
       // move  from middle to side
@@ -107,11 +112,11 @@ public class PlayerAI extends Player {
      //is valid move
     
     } else {
-     //invalid move
-     return false;
-    }
-    
-    return true;
+      //System.out.println(pieceToMove + " is INVALID");
+      return false;
+     }
+     //System.out.println(pieceToMove + " is VALID");
+     return true;
 }
   
 /**
@@ -120,8 +125,9 @@ public class PlayerAI extends Player {
 */
   private int availableMoves() { // Mayhaps we use this function
     ArrayList<Integer> validMoves = new ArrayList<>();
+    Random rand = new Random();
 
-    for (int i = 0; i < CIRCLE_SIZE; i++) {
+    for (int i = 0; i <= CIRCLE_SIZE; i++) {
       if (super.boardReader.pieceAt(i) == super.playerID) {
         if (isValidMove(i)) {
           validMoves.add(i);
@@ -140,7 +146,7 @@ public class PlayerAI extends Player {
       return -1;
     }
 
-    return validMoves.get(0);
+    return validMoves.get(rand.nextInt(validMoves.size()));
   }
   
 }

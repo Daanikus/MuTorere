@@ -19,8 +19,9 @@ package MuTorere;
   
 import MuTorere.Player;
 import java.util.ArrayList;
+import java.util.Random;
 
-public class PlayerAI extends Player {
+public class PlayerAI2 extends Player {
   
 /**
   BoardReader provides a method pieceAt(int index) which returns either
@@ -57,7 +58,7 @@ public class PlayerAI extends Player {
 //  this.playerID = playerID;
 // }
  
-  public PlayerAI(BoardReader boardReader, Board.Piece playerID) {
+  public PlayerAI2(BoardReader boardReader, Board.Piece playerID) {
     super(boardReader, playerID);
   }
  
@@ -70,8 +71,10 @@ public class PlayerAI extends Player {
   @return The location of the piece that you wish to move to the empty space.
  */
   public int getMove(){ 
-    //return availableMoves();
-    return 1;
+    int temp = availableMoves();
+    System.out.println("Moving piece " + temp);
+    if (temp == -1) return 0;
+    return temp;
   }
   
   private Boolean isValidMove(int pieceToMove) {
@@ -84,7 +87,7 @@ public class PlayerAI extends Player {
     }
     
     spaceToRight = ((pieceToMove + 1) % CIRCLE_SIZE);
-    spaceToLeft = (pieceToMove + (CIRCLE_SIZE - 1) % CIRCLE_SIZE);
+    spaceToLeft = ((pieceToMove - 1) + CIRCLE_SIZE) % CIRCLE_SIZE;
     
     if (pieceToMove == CIRCLE_SIZE) { 
       // move  from middle to side
@@ -107,10 +110,10 @@ public class PlayerAI extends Player {
      //is valid move
     
     } else {
-     //invalid move
+     //System.out.println(pieceToMove + " is INVALID");
      return false;
     }
-    
+    //System.out.println(pieceToMove + " is VALID");
     return true;
 }
   
@@ -120,6 +123,7 @@ public class PlayerAI extends Player {
 */
   private int availableMoves() { // Mayhaps we use this function
     ArrayList<Integer> validMoves = new ArrayList<>();
+    Random rand = new Random();
 
     for (int i = 0; i <= CIRCLE_SIZE; i++) {
       if (super.boardReader.pieceAt(i) == super.playerID) {
@@ -139,8 +143,8 @@ public class PlayerAI extends Player {
     if (validMoves.isEmpty()) {
       return -1;
     }
-
-    return validMoves.get(0);
+    int temp = rand.nextInt(validMoves.size());
+    return validMoves.get(temp);
   }
   
 }
