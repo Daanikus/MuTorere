@@ -82,7 +82,7 @@ public class PlayerAI extends Player {
 
   private void updateBoardState() {
     for (int i = 0; i < CIRCLE_SIZE + 1; i++) {
-      if (boardReader.pieceAt(i == Board.Piece.BLANK)) {
+        if (boardReader.pieceAt(i) == Board.Piece.BLANK) {
         currentState[i] = -1;
       } else if (boardReader.pieceAt(i) == playerID) {
         currentState[i] = 0;
@@ -142,7 +142,7 @@ public class PlayerAI extends Player {
   private int availableMoves() { // Mayhaps we use this function
     ArrayList<Integer> validMoves = new ArrayList<>();
     Random rand = new Random();
-    int best move = 0;
+    int bestMove = 0;
 
     for (int i = 0; i <= CIRCLE_SIZE; i++) {
       if (super.boardReader.pieceAt(i) == super.playerID) {
@@ -152,7 +152,7 @@ public class PlayerAI extends Player {
       }
     }
 
-    validMoves = groupsOfTwo(validMoves);
+   
 
     /* For each of the valid moves:
         Simulate move
@@ -161,19 +161,37 @@ public class PlayerAI extends Player {
         If all moves do not prevent other player from moving, just move any (for now)
     */
     
-    if (validMoves.isEmpty()) {
-      return -1;
-    }
+    
     if (validMoves.size() > 1) {
-
+        validMoves = assessMoves(validMoves);
     }
-    return validMoves.get(rand.nextInt(validMoves.size()));
+    if (validMoves.isEmpty()) {
+        return -1;
+    }
+    
+    return validMoves.get(0);
   }
 
-  private ArrayList<Integer> groupsOfTwo(ArrayList<Integer> validMoves) {
-
-
-  }
+    private ArrayList<Integer> assessMoves(ArrayList<Integer> validMoves) {
+        for (Integer currentMove : validMoves) {
+            int consecutive = 0, longestRun = 0, prevPiece = currentState[0];
+            consecutive = (currentState[0] == 0) ? 1 : 0;
+            for (int i = 0; i < CIRCLE_SIZE; i++) {
+                if (currentState[i + 1] == 0 && prevPiece == 0) {
+                    consecutive++;
+                } else if (currentState[i + 1] == 0) {
+                    consecutive = 1;
+                } else {
+                    longestRun = consecutive;
+                    consecutive = 0;
+                }
+            }
+            if (longestRun > 2) {
+                validMoves.remove(currentMove);
+            }
+        }
+        return validMoves;
+    }
   
 }
 
