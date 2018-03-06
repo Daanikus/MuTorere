@@ -37,6 +37,7 @@ public class PlayerAI extends Player {
  */
   protected final int CIRCLE_SIZE = 8; // our magic number for the default size
   protected Board.Piece opponentID = (super.playerID == Board.Piece.ONE) ? Board.Piece.TWO : Board.Piece.ONE; // Check this out
+  protected int[] currentState = new int[CIRCLE_SIZE + 1];
  
  /**
   Player ID, either Board.Piece.ONE or Board.Piece.TWO
@@ -60,6 +61,7 @@ public class PlayerAI extends Player {
  
   public PlayerAI(BoardReader boardReader, Board.Piece playerID) {
     super(boardReader, playerID);
+    updateBoardState();
   }
  
  /**
@@ -74,7 +76,20 @@ public class PlayerAI extends Player {
     int temp = availableMoves();
     System.out.println("Moving piece " + temp);
     if (temp == -1) return 0;
+    updateBoardState();
     return temp;
+  }
+
+  private void updateBoardState() {
+    for (int i = 0; i < CIRCLE_SIZE + 1; i++) {
+      if (boardReader.pieceAt(i == Board.Piece.BLANK)) {
+        currentState[i] = -1;
+      } else if (boardReader.pieceAt(i) == playerID) {
+        currentState[i] = 0;
+      } else {
+        currentState[i] = 1;
+      }
+    }
   }
   
   private Boolean isValidMove(int pieceToMove) {
@@ -99,6 +114,7 @@ public class PlayerAI extends Player {
     } else if (empty == CIRCLE_SIZE && (super.boardReader.pieceAt(spaceToRight) == opponentID || super.boardReader.pieceAt(spaceToLeft) == opponentID)) {
       // check if you can move the piece to the middle
       
+
       //is valid move
       
     } else if (super.boardReader.pieceAt(spaceToRight) == Board.Piece.BLANK || super.boardReader.pieceAt(spaceToLeft) == Board.Piece.BLANK) { 
@@ -126,6 +142,7 @@ public class PlayerAI extends Player {
   private int availableMoves() { // Mayhaps we use this function
     ArrayList<Integer> validMoves = new ArrayList<>();
     Random rand = new Random();
+    int best move = 0;
 
     for (int i = 0; i <= CIRCLE_SIZE; i++) {
       if (super.boardReader.pieceAt(i) == super.playerID) {
@@ -134,6 +151,8 @@ public class PlayerAI extends Player {
         }
       }
     }
+
+    validMoves = groupsOfTwo(validMoves);
 
     /* For each of the valid moves:
         Simulate move
@@ -145,8 +164,15 @@ public class PlayerAI extends Player {
     if (validMoves.isEmpty()) {
       return -1;
     }
+    if (validMoves.size() > 1) {
 
+    }
     return validMoves.get(rand.nextInt(validMoves.size()));
+  }
+
+  private ArrayList<Integer> groupsOfTwo(ArrayList<Integer> validMoves) {
+
+
   }
   
 }
