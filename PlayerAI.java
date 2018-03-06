@@ -20,6 +20,7 @@ package MuTorere;
 import MuTorere.Player;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Arrays;
 
 public class PlayerAI extends Player {
   
@@ -90,6 +91,7 @@ public class PlayerAI extends Player {
         currentState[i] = 1;
       }
     }
+    System.out.println("Updated board state: " + currentState.toString());
   }
   
   private Boolean isValidMove(int pieceToMove) {
@@ -102,9 +104,9 @@ public class PlayerAI extends Player {
     }
     
     spaceToRight = ((pieceToMove + 1) % CIRCLE_SIZE);
-    System.out.println("Space to right is " + spaceToRight);
+    //System.out.println("Space to right is " + spaceToRight);
     spaceToLeft = ((pieceToMove - 1) + CIRCLE_SIZE) % CIRCLE_SIZE;
-    System.out.println("Space to left is " + spaceToLeft);
+    //System.out.println("Space to left is " + spaceToLeft);
     
     if (pieceToMove == CIRCLE_SIZE) { 
       // move  from middle to side
@@ -175,7 +177,24 @@ public class PlayerAI extends Player {
     private ArrayList<Integer> assessMoves(ArrayList<Integer> validMoves) {
         for (Integer currentMove : validMoves) {
             int consecutive = 0, longestRun = 0, prevPiece = currentState[0];
+            int[] tempBoard = currentState;
             consecutive = (currentState[0] == 0) ? 1 : 0;
+            int blankSpace = CIRCLE_SIZE;
+
+            for (int i = 0 ; i < CIRCLE_SIZE + 1; i++) {
+                if (currentState[i] == -1) {
+                    blankSpace = i;
+                    break;
+                }
+            }
+
+            
+            System.out.println("Blank space at index " + blankSpace);
+            tempBoard[blankSpace] = tempBoard[currentMove];
+            tempBoard[currentMove] = -1;
+
+
+            
             for (int i = 0; i < CIRCLE_SIZE; i++) {
                 if (currentState[i + 1] == 0 && prevPiece == 0) {
                     consecutive++;
